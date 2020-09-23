@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from gpxster import views
 urlpatterns = [
-    path('gpxster/', include('gpxster.urls')),
+    # path('', include('gpxster.urls')),
+    path('login/',views.Login.as_view(), name='login'),
     path('admin/', admin.site.urls),
+    path('', views.Index.as_view(), name='index')
 ]
