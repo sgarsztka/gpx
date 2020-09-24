@@ -5,6 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from gpxster.models import Entry
+from django.contrib.auth.decorators import login_required
+from gpxster.forms import EntryForm
 
 class Login(View):
     template = 'login.html'
@@ -27,14 +29,38 @@ class Login(View):
 
 
 
-
 class Index(LoginRequiredMixin, View):
     template = 'index.html'
     login_url = '/login/'
 
     def get(self, request):
-        # latestEntriesList = Entry.objects.order_by('-entryRideDate')[:10]
         output = Entry.objects.order_by('-entryRideDate')[:10]
-        # output = ','.join([q.entryTitle for q in latestEntriesList])
-        print(output)
         return render(request, self.template, {'output': output})
+
+class AddEntry(LoginRequiredMixin, View):
+    template = 'addentry.html'
+    redirect_field_name = 'login'
+
+    def get(self, request):
+        form = EntryForm()
+        return render(request,self.template, {'form':form})
+
+    def post(self,request):
+        if request.method == 'POST':
+            form = EntryForm(request.POST)
+            if form.is_valid():
+                entryTitle = form.cleaned_data['title']
+                entryRideDate = form.cleaned_data['rideDate']
+                entryPublicDate = form.cleaned_data['publicDate']
+                entryDist = form.cleaned_data['dist']
+                entryAvgSpeed = form.cleaned_data['avgSpeed']
+                entryDescription = form.cleaned_data['description']
+                entryCadence = form.cleaned_data['cadence']
+                entryHeartRate = form.cleaned_data['heartRate']
+                e = Entry(entryTitle=entryTitle, entryRideDate=entryRideDate, entryPublicDate=entryPublicDate, entryDist=entryDist,
+                    entryAvgSpeed=entryAvgSpeed,entryDescription=entryDescription,entryCadence=entryCadence,entryHeartRate=entryHeartRate)
+                e.save()
+                return HttpResponseRedirect('/')
+            else:
+                form = EntryForm()
+            return render(request,self.template, {'form':form})

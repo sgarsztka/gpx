@@ -75,6 +75,8 @@
                                 Charts
                             </a>
 
+
+
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -95,46 +97,11 @@
                                 DataTable Example
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Ride Date</th>
-                                                <th>Pub. Date</th>
-                                                <th>Distance</th>
-                                                <th>AVG Speed</th>
-                                                <th>Description</th>
-                                                <th>Cadence</th>
-                                                <th>HR</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                          {% if output %}
-
-                                              {% for x in output %}
-                                              <tr>
-                                                  <td>{{ x.entryTitle }}</td>
-                                                  <td>{{ x.entryRideDate }}</td>
-                                                  <td>{{ x.entryPublicDate }}</td>
-                                                  <td>{{ x.entryDist }}</td>
-                                                  <td>{{ x.entryAvgSpeed }}</td>
-                                                  <td>{{ x.entryDescription }}</td>
-                                                  <td>{{ x.entryCadence }}</td>
-                                                  <td>{{ x.entryHeartRate }}</td>
-
-                                              </tr>
-                                              {% endfor %}
-
-                                          {% else %}
-                                              <td>No entries are available.</td>
-                                          {% endif %}
-
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                              <form action="/add/" method="post">
+                                  {% csrf_token %}
+                                  {{ form }}
+                                  <input type="submit" value="Submit">
+                              </form>
                             </div>
                         </div>
                     </div>
