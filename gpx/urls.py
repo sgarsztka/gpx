@@ -14,11 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from gpxster import views
+from django.contrib.auth.views import LogoutView
+
 urlpatterns = [
     # path('', include('gpxster.urls')),
     path('login/',views.Login.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
     path('', views.Index.as_view(), name='index')
 ]

@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from gpxster.models import Entry
 
 class Login(View):
     template = 'login.html'
@@ -32,4 +33,8 @@ class Index(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
-        return render(request, self.template)
+        # latestEntriesList = Entry.objects.order_by('-entryRideDate')[:10]
+        output = Entry.objects.order_by('-entryRideDate')[:10]
+        # output = ','.join([q.entryTitle for q in latestEntriesList])
+        print(output)
+        return render(request, self.template, {'output': output})
