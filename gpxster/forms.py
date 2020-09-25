@@ -10,3 +10,8 @@ class EntryForm(forms.Form):
     description = forms.CharField(max_length=300)
     cadence = forms.IntegerField()
     heartRate = forms.IntegerField()
+
+
+class UploadGpxForm(forms.Form):
+    title = forms.CharField(max_length=80)
+    fileField = forms.FileField()

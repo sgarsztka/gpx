@@ -4,9 +4,10 @@ from django.views.generic import View
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from gpxster.models import Entry
+from gpxster.models import Entry, GpxTrack
 from django.contrib.auth.decorators import login_required
-from gpxster.forms import EntryForm
+from gpxster.forms import EntryForm, UploadGpxForm
+from gpxster.gpxsave import handle_uploaded_file
 
 class Login(View):
     template = 'login.html'
@@ -64,3 +65,22 @@ class AddEntry(LoginRequiredMixin, View):
             else:
                 form = EntryForm()
             return render(request,self.template, {'form':form})
+
+
+class AddGpx(LoginRequiredMixin, View):
+    template = 'gpx.html'
+    redirect_field_name = 'login'
+
+    def get(self, request):
+        form = UploadGpxForm()
+        return render (request,self.template,{'form':form})
+
+    def post(self, request):
+        if request.method == 'POST':
+            form = UploadGpxForm(request.POST, request.FILES)
+            if form.is_valid():
+                handle_uploaded_file(request.FILES['fileField'])
+                return HttpResponseRedirect('/gpx/')
+        else:
+            form = UploadGpxForm()
+        return render(request, self.template, {'form': form})

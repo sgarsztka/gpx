@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -16,6 +17,7 @@ class Entry(models.Model):
 
 
 class GpxTrack(models.Model):
-    entryGpx = models.ForeignKey(Entry, on_delete=models.CASCADE)
-
+    gpxTitle = models.CharField(max_length=100, default='Ride')
+    gpxDocument = models.FileField(upload_to='gpxs/%Y/%m/%d/', blank=True)
+    gpxUploadedDate = models.DateTimeField(default=now, editable = False)
 #class Map(models.Model): placeholder

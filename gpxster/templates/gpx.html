@@ -10,7 +10,13 @@
         <meta name="author" content="" />
         <title>Dashboard - SB Admin</title>
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
+          <style>
+            .map {
+              height: 500px;
+              width: 100%;
+            }
+          </style>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
@@ -99,19 +105,36 @@
                                 DataTable Example
                             </div>
                             <div class="card-body">
-                              <form action="/add/" method="post">
-                                
+                              <!-- <form action="/gpx/" method="post"> -->
+                                <form method="post" enctype="multipart/form-data">
+                                  {% if form %}
                                   {% csrf_token %}
-                                  {{ form.as_p }}
-                                  <!-- <ul class="entry-table">
-                                  <li id="subject" class="entry-table">{{ form.title }}</li>
+                                  {{ form.as_p}}
 
-                              </ul> -->
-                                  <input type="submit" value="Submit">
-                              </form>
+                                  <button type="submit">Upload</button>
+                                  {% else %}
+                                      <td>No entries are available.</td>
+                                  {% endif %}
+                                </form>
+
+                              <!-- </form> -->
                             </div>
                         </div>
-
+                        <div id="map" class="map"></div>
+                            <script type="text/javascript">
+                              var map = new ol.Map({
+                                target: 'map',
+                                layers: [
+                                  new ol.layer.Tile({
+                                    source: new ol.source.OSM()
+                                  })
+                                ],
+                                view: new ol.View({
+                                  center: ol.proj.fromLonLat([17.61, 54.12]),
+                                  zoom: 8
+                                })
+                              });
+                            </script>
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
