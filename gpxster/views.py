@@ -76,10 +76,13 @@ class AddGpx(LoginRequiredMixin, View):
         return render (request,self.template,{'form':form})
 
     def post(self, request):
+        username = None
+        if request.user:
+            username = request.user.username
         if request.method == 'POST':
             form = UploadGpxForm(request.POST, request.FILES)
             if form.is_valid():
-                handle_uploaded_file(request.FILES['fileField'])
+                handle_uploaded_file(request.FILES['fileField'], username)
                 return HttpResponseRedirect('/gpx/')
         else:
             form = UploadGpxForm()

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
-
+from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 
@@ -18,6 +18,10 @@ class Entry(models.Model):
 
 class GpxTrack(models.Model):
     gpxTitle = models.CharField(max_length=100, default='Ride')
-    gpxDocument = models.FileField(upload_to='gpxs/%Y/%m/%d/', blank=True)
     gpxUploadedDate = models.DateTimeField(default=now, editable = False)
-#class Map(models.Model): placeholder
+    gpxAuthor = models.CharField(max_length=30, default='default', editable = False)
+    gpxRideDate = models.DateTimeField(default=now)
+    gpxDist = models.DecimalField(max_digits=6, decimal_places=2,default=0)
+    gpxAvgSpeed = models.IntegerField(default=0)
+    gpxCadence = models.IntegerField(default=0)
+    gpxHeartRate = models.IntegerField(default=0)
