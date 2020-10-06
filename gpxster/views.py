@@ -8,6 +8,7 @@ from gpxster.models import Entry, GpxTrack
 from django.contrib.auth.decorators import login_required
 from gpxster.forms import EntryForm, UploadGpxForm
 from gpxster.gpxsave import handle_uploaded_file
+import json
 
 class Login(View):
     template = 'login.html'
@@ -76,14 +77,29 @@ class AddGpx(LoginRequiredMixin, View):
         return render (request,self.template,{'form':form})
 
     def post(self, request):
+        json_str = None
         username = None
         if request.user:
             username = request.user.username
         if request.method == 'POST':
             form = UploadGpxForm(request.POST, request.FILES)
+            gpx = GpxTrack()
             if form.is_valid():
-                handle_uploaded_file(request.FILES['fileField'], username)
+                json_cords, json_times, json_elevations = handle_uploaded_file(request.FILES['fileField'], username)
+                json_cords_deserialized = json.loads(json_cords)
+                json_times_deserialized = json.loads(json_times)
+                json_elevations_deserialized = json.loads(json_elevations)
+
+
+                gpx.gpxLatLonArray = json_cords_deserialized
+                gpx.gpxTimesArray = json_times_deserialized
+                gpx.gpxElevationArray = json_elevations_deserialized
+                gpx.gpxAuthor = username
+                gpx.save()
+                
+
                 return HttpResponseRedirect('/gpx/')
+
         else:
             form = UploadGpxForm()
         return render(request, self.template, {'form': form})
