@@ -13,5 +13,5 @@ class EntryForm(forms.Form):
 
 
 class UploadGpxForm(forms.Form):
-    title = forms.CharField(max_length=80)
+    title = forms.CharField(max_length=80, initial='Great Ride')
     fileField = forms.FileField()

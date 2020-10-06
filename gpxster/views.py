@@ -36,8 +36,13 @@ class Index(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
+        username = None
+        if request.user:
+            username = request.user.username
         output = Entry.objects.order_by('-entryRideDate')[:10]
-        return render(request, self.template, {'output': output})
+        tracks = GpxTrack.objects.filter(gpxAuthor=username).order_by('-gpxRideDate')[:10]
+        return render(request, self.template, {'tracks' : tracks})
+                                                # {'tracks' : tracks})
 
 class AddEntry(LoginRequiredMixin, View):
     template = 'addentry.html'
@@ -95,8 +100,9 @@ class AddGpx(LoginRequiredMixin, View):
                 gpx.gpxTimesArray = json_times_deserialized
                 gpx.gpxElevationArray = json_elevations_deserialized
                 gpx.gpxAuthor = username
+                gpx.gpxRideDate = json_times_deserialized[0]
                 gpx.save()
-                
+
 
                 return HttpResponseRedirect('/gpx/')
 
