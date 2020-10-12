@@ -4,6 +4,7 @@ from django.conf import settings
 from xml.dom.minidom import parse, parseString
 import json
 from geojson import MultiPoint
+import uuid
 
 def handle_uploaded_file(f, username):
     pointsList = []
@@ -11,8 +12,9 @@ def handle_uploaded_file(f, username):
     elevationList = []
     gpxList = []
     timestr = time.strftime("%Y%m%d-%H%M%S")
+    gpxUuid= uuid.uuid4()
     base_dir =settings.MEDIA_ROOT
-    filename = os.path.join(base_dir, str(timestr)+str('.gpx'))
+    filename = os.path.join(base_dir, str(gpxUuid)+str('.gpx'))
 
     with open(filename, 'wb+') as destination:
         for chunk in f.chunks():
@@ -39,7 +41,7 @@ def handle_uploaded_file(f, username):
         #       (lat, lon, elevation.firstChild.data, times.firstChild.data))
     # spointsList.append(username)
     gpxList.append(pointsList)
-    os.remove(filename)
+    # os.remove(filename)
     a = MultiPoint(pointsList)
 
     # for x in range(0,len(gpxList)):
@@ -48,4 +50,4 @@ def handle_uploaded_file(f, username):
     cord_response = json.dumps(a)
     time_response = json.dumps(timesList)
     elevation_response = json.dumps(elevationList)
-    return cord_response, time_response, elevation_response
+    return cord_response, time_response, elevation_response,gpxUuid

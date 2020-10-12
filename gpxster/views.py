@@ -10,6 +10,8 @@ from gpxster.forms import EntryForm, UploadGpxForm
 from gpxster.gpxsave import handle_uploaded_file
 import json
 
+
+
 class Login(View):
     template = 'login.html'
 
@@ -84,18 +86,19 @@ class AddGpx(LoginRequiredMixin, View):
     def post(self, request):
         json_str = None
         username = None
+        gpxUuid = None
         if request.user:
             username = request.user.username
         if request.method == 'POST':
             form = UploadGpxForm(request.POST, request.FILES)
             gpx = GpxTrack()
             if form.is_valid():
-                json_cords, json_times, json_elevations = handle_uploaded_file(request.FILES['fileField'], username)
+                json_cords, json_times, json_elevations, gpxUuid = handle_uploaded_file(request.FILES['fileField'], username)
                 json_cords_deserialized = json.loads(json_cords)
                 json_times_deserialized = json.loads(json_times)
                 json_elevations_deserialized = json.loads(json_elevations)
 
-
+                gpx.gpxUuid = gpxUuid
                 gpx.gpxLatLonArray = json_cords_deserialized
                 gpx.gpxTimesArray = json_times_deserialized
                 gpx.gpxElevationArray = json_elevations_deserialized
@@ -104,7 +107,9 @@ class AddGpx(LoginRequiredMixin, View):
                 gpx.save()
 
 
-                return HttpResponseRedirect('/gpx/')
+                # return HttpResponseRedirect('/gpx/', str(gpxUuid) )
+                return render(request,self.template, {'gpxUuid':gpxUuid})
+
 
         else:
             form = UploadGpxForm()

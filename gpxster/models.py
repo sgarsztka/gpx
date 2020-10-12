@@ -23,6 +23,7 @@ class Entry(models.Model):
 
 class GpxTrack(models.Model):
     gpxId = models.AutoField(primary_key=True)
+    gpxUuid = models.CharField(max_length=100, default=0)
     gpxTitle = models.CharField(max_length=100)
     gpxUploadedDate = models.DateTimeField(default=now, editable = False)
     gpxAuthor = models.CharField(max_length=30, default='default', editable = False)
