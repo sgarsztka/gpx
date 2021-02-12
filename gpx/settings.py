@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-        
+
     'gpxster.apps.GpxsterConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -126,4 +126,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL='/login/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'gpxster/gpxs')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'gpxster/gpxs/')
+MEDIA_URL = '/gpxs/'

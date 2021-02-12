@@ -29,7 +29,6 @@ def handle_uploaded_file(f, username):
         lon = point.getAttribute("lon")
         elevation = point.getElementsByTagName("ele")[0]
         times = point.getElementsByTagName("time")[0]
-        # tempTuple = (float(lat),float(lon),float(elevation.firstChild.data),times.firstChild.data)
         cordTuple = (float(lat),float(lon))
         pointsList.append(cordTuple)
         timesTuple = times.firstChild.data
@@ -44,8 +43,6 @@ def handle_uploaded_file(f, username):
     # os.remove(filename)
     a = MultiPoint(pointsList)
 
-    # for x in range(0,len(gpxList)):
-    #     print(gpxList[x])
 
     cord_response = json.dumps(a)
     time_response = json.dumps(timesList)

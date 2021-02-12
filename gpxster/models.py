@@ -29,7 +29,7 @@ class GpxTrack(models.Model):
     gpxAuthor = models.CharField(max_length=30, default='default', editable = False)
     gpxRideDate = models.DateTimeField(default=now)
     gpxDist = models.DecimalField(max_digits=6, decimal_places=2,default=0)
-    gpxAvgSpeed = models.IntegerField(default=0)
+    gpxAvgSpeed = models.DecimalField(max_digits=6, decimal_places=2,default=0)
     gpxCadence = models.IntegerField(default=0)
     gpxHeartRate = models.IntegerField(default=0)
     gpxLatLonArray = JSONField(default=list)
@@ -39,6 +39,7 @@ class GpxTrack(models.Model):
     gpxElevationArray = ArrayField(
         models.CharField(max_length=10, blank=True),
     )
+    gpxRideTime = models.TimeField(auto_now_add=False,default = now)
     gpxAuthor = models.CharField(max_length=50, default = 'default')
     class Meta:
        managed = True

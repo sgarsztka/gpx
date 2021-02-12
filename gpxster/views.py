@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from gpxster.forms import EntryForm, UploadGpxForm
 from gpxster.gpxsave import handle_uploaded_file
 import json
-
+from gpxster.calculations import calculate_distance,calculate_time, calculate_avg_spd
 
 
 class Login(View):
@@ -81,6 +81,7 @@ class AddGpx(LoginRequiredMixin, View):
 
     def get(self, request):
         form = UploadGpxForm()
+
         return render (request,self.template,{'form':form})
 
     def post(self, request):
@@ -98,17 +99,34 @@ class AddGpx(LoginRequiredMixin, View):
                 json_times_deserialized = json.loads(json_times)
                 json_elevations_deserialized = json.loads(json_elevations)
 
+
+                cordination_points = json_cords_deserialized['coordinates']
+                time_points = json_times_deserialized
+
+                ride_time,seconds = calculate_time(time_points)
+                ride_distance = calculate_distance(cordination_points)
+                avg_speed = calculate_avg_spd(ride_distance,seconds)
+
+                print(ride_time)
+                print(ride_distance)
+                print(avg_speed)
+
+                gpx.gpxTitle = form.cleaned_data['title']
                 gpx.gpxUuid = gpxUuid
                 gpx.gpxLatLonArray = json_cords_deserialized
                 gpx.gpxTimesArray = json_times_deserialized
                 gpx.gpxElevationArray = json_elevations_deserialized
                 gpx.gpxAuthor = username
                 gpx.gpxRideDate = json_times_deserialized[0]
+                gpx.gpxDist = ride_distance
+                gpx.gpxAvgSpeed = avg_speed
+                gpx.gpxRideTime = ride_time
                 gpx.save()
 
 
                 # return HttpResponseRedirect('/gpx/', str(gpxUuid) )
                 return render(request,self.template, {'gpxUuid':gpxUuid})
+
 
 
         else:

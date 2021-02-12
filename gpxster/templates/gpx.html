@@ -130,7 +130,7 @@
 
                           <script type="text/javascript">
                         var filename = JSON.stringify('{{gpxUuid|safe }}');
-
+                        var cord =[];
                         filename = filename.replace(/"/g,"");
                         var urli = "/gpxs/"+filename+'.gpx'
                         console.log(urli)
@@ -142,8 +142,8 @@
                                   })
                                 ],
                                 view: new ol.View({
-                                  center: ol.proj.fromLonLat([19.3313627, 53.1062152]),
-                                  zoom: 8
+                                  center: ol.proj.fromLonLat([18.4313627, 54.4062152]),
+                                  zoom: 10
                                 })
                               });
 
@@ -155,16 +155,20 @@
                                   layerFilter: function(candidate) { return candidate === gpxPointLayer; }
                                 });
                                 if (features.length > 0) {
+
                                   var info = [];
                                   var i, ii;
                                   for (i = 0, ii = features.length; i < ii; ++i) {
                                     // display lat, lon, ele and time from the point coordinates
                                     var coordinates = features[i].getGeometry().getCoordinates();
+
                                     var ll = ol.proj.toLonLat(coordinates.slice(0,2));
+
                                     var d = new Date();
                                     d.setTime(coordinates[3]*1000);
                                     var llet = ll[1].toFixed(7) + ', ' + ll[0].toFixed(7) + ', ' + coordinates[2] + 'm, ' + d.toUTCString();
                                     info.push(llet);
+
                                   }
                                   document.getElementById('info').innerHTML = info.join('<br>') || '(unknown)';
                                   map.getTargetElement().style.cursor = 'pointer';
@@ -179,7 +183,7 @@
                                 style: new ol.style.Style({
                                   image: new ol.style.Circle({
                                     fill: new ol.style.Fill({color: 'red'}),
-                                    radius: 4
+                                    radius: 2
                                   })
                                 })
                               });
@@ -196,8 +200,9 @@
                               }
 
                               gpxTrackVector.on('addfeature', function(evt){
-                                // create point features from GPX linestring coordinates
+
                                 if (evt.feature.getGeometry().getType() == 'LineString') {
+
                                   addPoints(evt.feature.getGeometry());
                                 } else if (evt.feature.getGeometry().getType() == 'MultiLineString') {
                                   evt.feature.getGeometry().getLineStrings().forEach(function(linestring){
@@ -210,7 +215,7 @@
                                 source: gpxTrackVector,
                                 style: new ol.style.Style({
                                   stroke: new ol.style.Stroke({
-                                    color: 'black',
+                                    color: 'cyan',
                                      width: 4
                                   }),
                                   image: new ol.style.Circle({
@@ -220,9 +225,16 @@
 
                                 })
                               });
-
+                              // map.getView().setCenter(ol.proj.fromLonLat([coordinates[0]))
                               map.addLayer(gpxTrackLayer);
                               map.addLayer(gpxPointLayer);
+                              gpxTrackLayer.getSource().on("change", function(evt) {
+                                  extent = gpxTrackLayer.getSource().getExtent();
+                                  map.getView().fit(extent, map.getSize());
+                              });
+
+
+
 
                               map.on('pointermove', function(evt) {
                                 if (evt.dragging) {

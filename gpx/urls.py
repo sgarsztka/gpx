@@ -18,6 +18,7 @@ from django.conf import settings
 from django.urls import path, include
 from gpxster import views
 from django.contrib.auth.views import LogoutView
+from django.conf.urls.static import static
 
 urlpatterns = [
     # path('', include('gpxster.urls')),
@@ -27,4 +28,4 @@ urlpatterns = [
     path('', views.Index.as_view(), name='index'),
     path('add/', views.AddEntry.as_view(), name='addentry'),
     path('gpx/', views.AddGpx.as_view(), name='gpx')
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
