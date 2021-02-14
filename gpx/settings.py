@@ -128,3 +128,4 @@ LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL='/login/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'gpxster/gpxs/')
 MEDIA_URL = '/gpxs/'
+TIME_INPUT_FORMATS = ['%H:%M:%S',]

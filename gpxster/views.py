@@ -128,7 +128,20 @@ class AddGpx(LoginRequiredMixin, View):
                 return render(request,self.template, {'gpxUuid':gpxUuid})
 
 
-
         else:
             form = UploadGpxForm()
         return render(request, self.template, {'form': form})
+
+class GpxDetails(LoginRequiredMixin, View):
+    template = 'gpxDetails.html'
+    redirect_field_name = 'login'
+    gpx = GpxTrack()
+
+
+    def get(self, request, gpxUuid):
+        username = None
+        if request.user:
+            username = request.user.username
+
+        tracks = GpxTrack.objects.filter(gpxAuthor=username).filter(gpxUuid=gpxUuid)
+        return render(request, self.template, {'tracks' : tracks, 'gpxUuid': gpxUuid})
