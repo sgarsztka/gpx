@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import View
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -145,3 +145,32 @@ class GpxDetails(LoginRequiredMixin, View):
 
         tracks = GpxTrack.objects.filter(gpxAuthor=username).filter(gpxUuid=gpxUuid)
         return render(request, self.template, {'tracks' : tracks, 'gpxUuid': gpxUuid})
+
+
+class Map(LoginRequiredMixin, View):
+    template = 'map.html'
+    redirect_field_name = 'login'
+    gpx = GpxTrack()
+
+
+    def get(self, request):
+        username = None
+        dict1 = {}
+        if request.user:
+            username = request.user.username
+
+        tracks = list(GpxTrack.objects.filter(gpxAuthor=username).values_list('gpxUuid', flat=True))
+
+
+
+        dict1['tracks']=tracks
+
+        print(dict1)
+
+
+        return render(request, self.template, {'dict1':dict1})
+
+
+
+        # return render(request, self.template, tracks)
+        # return JsonResponse(dict1)

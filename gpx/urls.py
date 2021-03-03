@@ -29,4 +29,5 @@ urlpatterns = [
     path('add/', views.AddEntry.as_view(), name='addentry'),
     path('gpx/', views.AddGpx.as_view(), name='gpx'),
     path('gpxDetails/<uuid:gpxUuid>/', views.GpxDetails.as_view(), name='gpxDetails'),
+    path('map/', views.Map.as_view(), name='map')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
