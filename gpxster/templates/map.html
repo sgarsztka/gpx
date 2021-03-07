@@ -119,15 +119,16 @@
               <script type="text/javascript">
 
                         filename = {{dict1|safe}}
+                        var gpxTrackLayer=[]
 
+                        var gpxTrackVector=[]
                         var filenames =[]
                         var urli= []
                         for (i = 0; i < filename.tracks.length; i++) {
                             filenames.push(filename.tracks[i].replace(/"/g,""));
                             urli.push("/gpxs/"+filenames[i]+'.gpx')
                           }
-                        console.log(urli[0])
-                        // filenames = filename.tracks[1].replace(/"/g,"");
+
 
                         var cord =[];
                         var map = new ol.Map({
@@ -155,12 +156,16 @@
                                 })
                               });
 
-                              
 
-                              gpxTrackVector = new ol.source.Vector({
-                                url: urli[1],
-                                format: new ol.format.GPX()
-                              });
+                              for (i = 0; i < filename.tracks.length; i++) {
+                                gpxTrackVector[i] = new ol.source.Vector({
+                                  url: urli[i],
+                                  format: new ol.format.GPX()
+                                });
+                                }
+
+
+
 
                               function addPoints(linestring) {
                                 linestring.getCoordinates().forEach(function(coordinates) {
@@ -168,39 +173,34 @@
                                 });
                               }
 
-                              gpxTrackVector.on('addfeature', function(evt){
 
-                                if (evt.feature.getGeometry().getType() == 'LineString') {
 
-                                  addPoints(evt.feature.getGeometry());
-                                } else if (evt.feature.getGeometry().getType() == 'MultiLineString') {
-                                  evt.feature.getGeometry().getLineStrings().forEach(function(linestring){
-                                    addPoints(linestring);
-                                  });
-                                }
-                              });
 
-                              var gpxTrackLayer = new ol.layer.Vector({
-                                source: gpxTrackVector,
-                                style: new ol.style.Style({
-                                  stroke: new ol.style.Stroke({
-                                    color: 'cyan',
-                                     width: 4
-                                  }),
-                                  image: new ol.style.Circle({
-                                    fill: new ol.style.Fill({color: 'green'}),
-                                    radius: 6
+                              for (i = 0; i < filename.tracks.length; i++) {
+                                 gpxTrackLayer[i] = new ol.layer.Vector({
+                                  source: gpxTrackVector[i],
+                                  style: new ol.style.Style({
+                                    stroke: new ol.style.Stroke({
+                                      color: "#" + ((1 << 24) * Math.random() | 0).toString(16),
+                                       width: 4
+                                    }),
+                                    image: new ol.style.Circle({
+                                      fill: new ol.style.Fill({color: 'green'}),
+                                      radius: 6
+                                    })
+
                                   })
+                                });
+                                }
 
-                                })
-                              });
-                              // map.getView().setCenter(ol.proj.fromLonLat([coordinates[0]))
-                              map.addLayer(gpxTrackLayer);
+                              
+
+                              for (i = 0; i < filename.tracks.length; i++) {
+                                map.addLayer(gpxTrackLayer[i]);
+                              }
+
                               map.addLayer(gpxPointLayer);
-                              gpxTrackLayer.getSource().on("change", function(evt) {
-                                  extent = gpxTrackLayer.getSource().getExtent();
-                                  map.getView().fit(extent, map.getSize());
-                              });
+
 
 
 
