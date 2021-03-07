@@ -27,3 +27,17 @@ def calculate_time(time):
 def calculate_avg_spd(distance,time):
     v = (distance/time)*3600
     return v
+
+
+
+def check_decimal(elev_array):
+    count = 0
+    p = elev_array[0]
+    while (p > 0):
+        count = count + 1
+        p = p // 10
+    if (count > 3):
+        for x in range(0,len(elev_array)):
+            elev_array[x] = elev_array[x] / 100;
+    
+    return elev_array

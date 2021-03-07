@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from gpxster.forms import EntryForm, UploadGpxForm
 from gpxster.gpxsave import handle_uploaded_file
 import json
-from gpxster.calculations import calculate_distance,calculate_time, calculate_avg_spd
+from gpxster.calculations import calculate_distance,calculate_time, calculate_avg_spd, check_decimal
 
 
 class Login(View):
@@ -99,7 +99,7 @@ class AddGpx(LoginRequiredMixin, View):
                 json_times_deserialized = json.loads(json_times)
                 json_elevations_deserialized = json.loads(json_elevations)
 
-
+                json_elevations_deserialized = (check_decimal(json_elevations_deserialized))
                 cordination_points = json_cords_deserialized['coordinates']
                 time_points = json_times_deserialized
 
@@ -140,11 +140,14 @@ class GpxDetails(LoginRequiredMixin, View):
 
     def get(self, request, gpxUuid):
         username = None
+        dict_elev= {}
         if request.user:
             username = request.user.username
 
         tracks = GpxTrack.objects.filter(gpxAuthor=username).filter(gpxUuid=gpxUuid)
-        return render(request, self.template, {'tracks' : tracks, 'gpxUuid': gpxUuid})
+        elev_array = list(GpxTrack.objects.filter(gpxAuthor=username).values_list('gpxElevationArray', flat=True))
+        dict_elev['elev_array']=elev_array
+        return render(request, self.template, {'tracks' : tracks, 'gpxUuid': gpxUuid, 'dict_elev':dict_elev})
 
 
 class Map(LoginRequiredMixin, View):

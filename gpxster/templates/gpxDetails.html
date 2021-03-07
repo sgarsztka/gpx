@@ -22,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -152,11 +154,68 @@
                         <div id="map" class="map"></div>
                         <div id="info">&nbsp;</div>
 
+                        <div class="card-body">
+                          <div class="col-sm">
+                              <canvas id="myChart" width="200" height="100"></canvas>
+                        </div>
+                        <div class="col-sm">
+                              One of three columns
+                        </div>
+
+
+                      </div>
+
+                      <script type="text/javascript">
+                      Chart.defaults.global.legend.display = false;
+                      var elev_array ={{dict_elev|safe}};
+                        console.log(elev_array.elev_array.length)
+                        console.log(elev_array.elev_array[0])
+
+                        new Chart(document.getElementById("myChart"), {
+                            type: 'line',
+                            data: {
+                              labels: elev_array.elev_array[0],
+                              datasets: [{
+                                  data: elev_array.elev_array[0],
+                                  label: "Elevetion",
+                                  borderColor: "#3e95cd",
+                                  fill: false
+                                }]},
+                            options: {
+                              scales: {
+                                    xAxes: [{
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      },
+                                        ticks: {
+                                            display: false
+                                        }
+                                    }],
+                                    yAxes: [{
+                                      gridLines: {
+                                          color: "rgba(0, 0, 0, 0)",
+                                      },
+                                        ticks: {
+                                            display: false
+                                        }
+                                    }]
+                                },
+                              legend: {
+                                display: false
+                                 },
+                                title: {
+                                display: false,
+                                text: ''
+                              }
+                            }
+                          });
+
+                      </script>
 
 
                           <script type="text/javascript">
                         var filename = JSON.stringify('{{gpxUuid|safe }}');
-                        
+
                         var cord =[];
                         filename = filename.replace(/"/g,"");
                         var urli = "/gpxs/"+filename+'.gpx'
@@ -174,36 +233,7 @@
                                 })
                               });
 
-                              var displayFeatureInfo = function(pixel) {
-                                var features = [];
-                                map.forEachFeatureAtPixel(pixel, function(feature) {
-                                  features.push(feature);
-                                }, {
-                                  layerFilter: function(candidate) { return candidate === gpxPointLayer; }
-                                });
-                                if (features.length > 0) {
 
-                                  var info = [];
-                                  var i, ii;
-                                  for (i = 0, ii = features.length; i < ii; ++i) {
-                                    // display lat, lon, ele and time from the point coordinates
-                                    var coordinates = features[i].getGeometry().getCoordinates();
-
-                                    var ll = ol.proj.toLonLat(coordinates.slice(0,2));
-
-                                    var d = new Date();
-                                    d.setTime(coordinates[3]*1000);
-                                    var llet = ll[1].toFixed(7) + ', ' + ll[0].toFixed(7) + ', ' + coordinates[2] + 'm, ' + d.toUTCString();
-                                    info.push(llet);
-
-                                  }
-                                  document.getElementById('info').innerHTML = info.join('<br>') || '(unknown)';
-                                  map.getTargetElement().style.cursor = 'pointer';
-                                } else {
-                                  document.getElementById('info').innerHTML = '&nbsp;';
-                                  map.getTargetElement().style.cursor = '';
-                                }
-                              };
 
                               var gpxPointLayer = new ol.layer.Vector({
                                 source: new ol.source.Vector(),
@@ -263,13 +293,13 @@
 
 
 
-                              map.on('pointermove', function(evt) {
-                                if (evt.dragging) {
-                                  return;
-                                }
-                                var pixel = map.getEventPixel(evt.originalEvent);
-                                displayFeatureInfo(pixel);
-                              });
+                              // map.on('pointermove', function(evt) {
+                              //   if (evt.dragging) {
+                              //     return;
+                              //   }
+                              //   var pixel = map.getEventPixel(evt.originalEvent);
+                              //   displayFeatureInfo(pixel);
+                              // });
 
                           </script>
                     </div>
